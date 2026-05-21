@@ -81,7 +81,10 @@ export default function Home() {
   const downloadPoster = async () => {
     if (!posterRef.current) return;
 
-    const dataUrl = await htmlToImage.toPng(posterRef.current);
+    const dataUrl = await htmlToImage.toPng(posterRef.current, {
+      pixelRatio: 2, // 🔥 mejora calidad
+      backgroundColor: null,
+    });
 
     const link = document.createElement("a");
     link.download = "hayley-setlist.png";
@@ -99,7 +102,7 @@ export default function Home() {
         Armá tu setlist ideal, descargá tu imagen y compartila!
       </p>
 
-      {/* INPUT DE NOMBRE */}
+      {/* INPUT */}
       <input
         type="text"
         placeholder="Tu @..."
@@ -122,7 +125,7 @@ export default function Home() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-10">
-        {/* LISTA DE CANCIONES */}
+        {/* LISTA */}
         <div className="space-y-10">
           {Object.entries(albums).map(([album, songs]) => (
             <div key={album}>
@@ -147,10 +150,10 @@ export default function Home() {
           ))}
         </div>
 
-        {/* POSTER */}
+        {/* POSTER (FIX REAL) */}
         <div
           ref={posterRef}
-          className="relative rounded-3xl p-10 sticky top-10 h-[900px] overflow-y-auto"
+          className="relative rounded-3xl p-10 sticky top-10 h-auto"
         >
           {/* Fondo */}
           <div
