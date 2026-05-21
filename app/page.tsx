@@ -82,7 +82,7 @@ export default function Home() {
     if (!posterRef.current) return;
 
     const dataUrl = await htmlToImage.toPng(posterRef.current, {
-      pixelRatio: 2, // 🔥 mejora calidad
+      pixelRatio: 2,
       backgroundColor: undefined,
     });
 
@@ -102,7 +102,6 @@ export default function Home() {
         Armá tu setlist ideal, descargá tu imagen y compartila!
       </p>
 
-      {/* INPUT */}
       <input
         type="text"
         placeholder="Tu @..."
@@ -150,50 +149,52 @@ export default function Home() {
           ))}
         </div>
 
-        {/* POSTER (FIX REAL) */}
-        <div
-          ref={posterRef}
-          className="relative rounded-3xl p-10 sticky top-10 h-auto"
-        >
-          {/* Fondo */}
+        {/* POSTER FIX FINAL */}
+        <div className="sticky top-10">
           <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: "url('/img/fondo.png')" }}
-          />
+            ref={posterRef}
+            className="relative rounded-3xl p-10 w-[1080px] min-h-[1350px] overflow-hidden"
+          >
+            {/* Fondo */}
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: "url('/img/fondo.png')" }}
+            />
 
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-white/40" />
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-white/40" />
 
-          {/* CONTENIDO */}
-          <div className="relative z-10">
-            <p className="uppercase tracking-[0.3em] text-sm mb-3">
-              15 de Noviembre - Estadio Malvinas Argentinas
-            </p>
-
-            <h2 className="text-5xl font-black leading-none mb-2">
-              THE HAYLEY WILLIAMS SHOW
-            </h2>
-
-            {name && (
-              <p className="text-sm opacity-70 mb-8">
-                by {name}
+            {/* CONTENIDO */}
+            <div className="relative z-10">
+              <p className="uppercase tracking-[0.3em] text-sm mb-3">
+                15 de Noviembre - Estadio Malvinas Argentinas
               </p>
-            )}
 
-            <div className="space-y-3">
-              {selectedSongs.map((song, index) => (
-                <p
-                  key={song}
-                  className="text-xl border-b border-white/30 pb-2"
-                >
-                  {index + 1}. {song}
+              <h2 className="text-5xl font-black leading-none mb-2">
+                THE HAYLEY WILLIAMS SHOW
+              </h2>
+
+              {name && (
+                <p className="text-sm opacity-70 mb-8">
+                  by {name}
                 </p>
-              ))}
-            </div>
+              )}
 
-            <p className="mt-10 text-sm opacity-70">
-              @ParamoreArgent
-            </p>
+              <div className="space-y-3">
+                {selectedSongs.map((song, index) => (
+                  <p
+                    key={song}
+                    className="text-xl border-b border-white/30 pb-2"
+                  >
+                    {index + 1}. {song}
+                  </p>
+                ))}
+              </div>
+
+              <p className="mt-10 text-sm opacity-70">
+                @ParamoreArgent
+              </p>
+            </div>
           </div>
         </div>
       </div>
