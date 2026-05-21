@@ -83,7 +83,7 @@ export default function Home() {
 
     const dataUrl = await htmlToImage.toPng(posterRef.current, {
       pixelRatio: 2, // 🔥 mejora calidad
-      backgroundColor: null,
+      backgroundColor: undefined,
     });
 
     const link = document.createElement("a");
