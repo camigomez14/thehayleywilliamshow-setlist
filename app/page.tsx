@@ -99,12 +99,13 @@ export default function Home() {
       </h1>
 
       <p className="text-zinc-400 mb-6">
-        Armá tu setlist ideal, descargá tu imagen y compartila!
+      <p>Armá tu setlist ideal, descargalo y compartilo!</p>
+  <p>Create your ideal setlist, download it and share it!</p>
       </p>
 
       <input
         type="text"
-        placeholder="Tu @..."
+        placeholder="@user..."
         value={name}
         onChange={(e) => setName(e.target.value)}
         className="border p-2 rounded-lg mb-6 w-full max-w-sm"
@@ -167,7 +168,7 @@ export default function Home() {
             {/* CONTENIDO */}
             <div className="relative z-10">
               <p className="uppercase tracking-[0.3em] text-sm mb-3">
-                15 de Noviembre - Estadio Malvinas Argentinas
+                setlist
               </p>
 
               <h2 className="text-5xl font-black leading-none mb-2">
