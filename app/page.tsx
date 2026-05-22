@@ -176,7 +176,7 @@ export default function Home() {
                     className={`p-4 rounded-2xl border transition-all duration-200 ${
                       selectedSongs.includes(song)
                         ? "bg-[#fd9abc] text-black border-[#fd9abc] shadow-md scale-[1.02]"
-                        : "bg-pink-50 border-pink-200 hover:border-[#fd9abc] hover:bg-pink-100"
+                        : "bg-pink-50 border-pink-200 hover:border-[#fd9abc] hover:bg-pink-100 active:scale-95"
                     }`}
                   >
                     {song}
