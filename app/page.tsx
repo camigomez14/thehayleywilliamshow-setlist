@@ -1,6 +1,20 @@
 "use client";
 
 import { useRef, useState } from "react";
+
+import {
+  DndContext,
+  closestCenter,
+} from "@dnd-kit/core";
+
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+
+import { CSS } from "@dnd-kit/utilities";
 import * as htmlToImage from "html-to-image";
 
 const albums = [
@@ -135,6 +149,43 @@ const songDurations: Record<string, number> = {
   "Showbiz": 229,
 };
 
+function SortableSong({
+  song,
+  index,
+}: {
+  song: string;
+  index: number;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: song });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <p
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`text-xl border-b border-white/30 pb-2 px-2 py-1 rounded-lg cursor-grab active:cursor-grabbing transition-all duration-200 
+        hover:bg-white/35 hover:backdrop-blur-sm hover:scale-[1.01] hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] ${
+        isDragging ? "opacity-50 scale-105" : ""
+      }`}
+    >
+      {index + 1}. {song}
+    </p>
+  );
+}
+
 export default function Home() {
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
   const [name, setName] = useState("");
@@ -148,6 +199,19 @@ export default function Home() {
       if (selectedSongs.length >= 20) return;
       setSelectedSongs([...selectedSongs, song]);
     }
+  };
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    setSelectedSongs((songs) => {
+      const oldIndex = songs.indexOf(active.id);
+      const newIndex = songs.indexOf(over.id);
+
+      return arrayMove(songs, oldIndex, newIndex);
+    });
   };
 
   const downloadPoster = async () => {
@@ -287,16 +351,25 @@ export default function Home() {
                 </p>
               )}
 
-              <div className="space-y-3">
-                {selectedSongs.map((song, index) => (
-                  <p
-                    key={song}
-                    className="text-xl border-b border-white/30 pb-2"
-                  >
-                    {index + 1}. {song}
-                  </p>
-                ))}
-              </div>
+              <DndContext
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={selectedSongs}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-3">
+                    {selectedSongs.map((song, index) => (
+                      <SortableSong
+                        key={song}
+                        song={song}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
 
               <p className="mt-10 text-sm opacity-70">
                 @ParamoreArgent
