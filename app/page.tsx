@@ -78,6 +78,63 @@ const albums = [
   },
 ];
 
+const songDurations: Record<string, number> = {
+  // PETALS FOR ARMOR
+  "Simmer": 266,
+  "Leave It Alone": 245,
+  "Cinnamon": 211,
+  "Creepin'": 178,
+  "Sudden Desire": 187,
+  "Dead Horse": 199,
+  "My Friend": 219,
+  "Over Yet": 214,
+  "Why We Ever": 263,
+  "Roses/Lotus/Violet/Iris": 321,
+  "Pure Love": 187,
+  "Taken": 165,
+  "Sugar on the Rim": 254,
+  "Watch Me While I Bloom": 224,
+  "Crystal Clear": 212,
+
+  // FLOWERS FOR VASES / DESCANSOS
+  "First Thing to Go": 221,
+  "My Limb": 186,
+  "Asystole": 246,
+  "Trigger": 215,
+  "Over Those Hills": 206,
+  "Good Grief": 238,
+  "Wait On": 162,
+  "KYRH": 214,
+  "Inordinary": 250,
+  "HYD": 209,
+  "No Use I Just Do": 223,
+  "Find Me Here": 233,
+  "Descansos": 191,
+  "Just A Lover": 307,
+
+  // EGO DEATH AT A BACHELORETTE PARTY
+  "Ice In My OJ": 131,
+  "Glum": 191,
+  "Kill Me": 167,
+  "Whim": 215,
+  "Mirtazapine": 201,
+  "Disappearing Man": 209,
+  "Love Me Different": 212,
+  "Brotherly Hate": 169,
+  "Negative Self Talk": 253,
+  "Ego Death At A Bachelorette Party": 199,
+  "Hard": 176,
+  "Discovery Channel": 197,
+  "True Believer": 229,
+  "Zissou": 175,
+  "Dream Girl In Shibuya": 262,
+  "Blood Bros": 167,
+  "I Won't Quit On You": 199,
+  "Parachute": 220,
+  "Good Ol' Days": 203,
+  "Showbiz": 229,
+};
+
 export default function Home() {
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
   const [name, setName] = useState("");
@@ -106,6 +163,18 @@ export default function Home() {
     link.href = dataUrl;
     link.click();
   };
+
+  const totalSeconds = selectedSongs.reduce((acc, song) => {
+    return acc + (songDurations[song] || 0);
+  }, 0);
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  const formattedRuntime =
+    hours > 0
+      ? `${hours} h ${minutes} min`
+      : `${minutes} min`;
 
   return (
     <main className="min-h-screen bg-white text-black p-10">
@@ -205,7 +274,7 @@ export default function Home() {
             {/* CONTENIDO */}
             <div className="relative z-10">
               <p className="uppercase tracking-[0.3em] text-sm mb-3">
-                setlist
+                setlist - <span className="font-semibold">{formattedRuntime}</span>
               </p>
 
               <h2 className="text-5xl font-black leading-none mb-2">
