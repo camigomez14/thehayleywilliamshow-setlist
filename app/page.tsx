@@ -176,7 +176,7 @@ function SortableSong({
       style={style}
       {...attributes}
       {...listeners}
-      className={`text-xl border-b border-white/30 pb-2 px-2 py-1 rounded-lg cursor-grab active:cursor-grabbing transition-all duration-200 
+      className={`text-base md:text-xl border-b border-white/30 pb-2 px-2 py-1 rounded-lg cursor-grab active:cursor-grabbing transition-all duration-200 
         hover:bg-white/35 hover:backdrop-blur-sm hover:scale-[1.01] hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] ${
         isDragging ? "opacity-50 scale-105" : ""
       }`}
@@ -189,6 +189,7 @@ function SortableSong({
 export default function Home() {
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
   const [name, setName] = useState("");
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const posterRef = useRef<HTMLDivElement>(null);
 
@@ -217,15 +218,21 @@ export default function Home() {
   const downloadPoster = async () => {
     if (!posterRef.current) return;
 
-    const dataUrl = await htmlToImage.toPng(posterRef.current, {
-      pixelRatio: 2,
-      backgroundColor: undefined,
-    });
+    try {
+      setIsDownloading(true);
 
-    const link = document.createElement("a");
-    link.download = "hayley-setlist.png";
-    link.href = dataUrl;
-    link.click();
+      const dataUrl = await htmlToImage.toPng(posterRef.current, {
+        pixelRatio: 2,
+        backgroundColor: undefined,
+      });
+
+      const link = document.createElement("a");
+      link.download = "hayley-setlist.png";
+      link.href = dataUrl;
+      link.click();
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const totalSeconds = selectedSongs.reduce((acc, song) => {
@@ -240,141 +247,240 @@ export default function Home() {
       ? `${hours} h ${minutes} min`
       : `${minutes} min`;
 
+  const downloadButtonContent = isDownloading ? (
+    <>
+      <span className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+      <span>Generating...</span>
+    </>
+  ) : (
+    "Download Poster"
+  );
+
   return (
-    <main className="min-h-screen bg-white text-black p-10">
-      <h1 className="text-5xl font-bold mb-2">
-        THE HAYLEY WILLIAMS SHOW
-      </h1>
+    <main className="min-h-screen bg-white text-black overflow-x-hidden px-4 py-6 md:p-10">
+      <section className="mx-auto w-full max-w-[1600px]">
+        <h1 className="text-4xl md:text-5xl font-bold leading-none mb-3 break-words">
+          THE HAYLEY WILLIAMS SHOW
+        </h1>
 
-      <div className="text-zinc-400 mb-6">
-        <p>Armá tu setlist ideal, descargalo y compartilo!</p>
-        <p>Create your ideal setlist, download it and share it!</p>
-      </div>
-
-      <input
-        type="text"
-        placeholder="@user..."
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="border p-2 rounded-lg mb-6 w-full max-w-sm"
-      />
-
-      <div className="mb-10 flex items-center justify-between">
-        <p className="text-[#fd9abc] text-lg">
-          {selectedSongs.length}/20 canciones seleccionadas
-        </p>
-
-        <button
-          onClick={downloadPoster}
-          className="bg-[#fd9abc] text-black px-6 py-3 rounded-xl font-bold"
-        >
-          Download Poster
-        </button>
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-10">
-        {/* LISTA */}
-        <div className="space-y-10">
-          {albums.map((album) => (
-            <div key={album.title}>
-              {/* HEADER DEL ALBUM */}
-              <div
-                className={`mb-5 rounded-3xl bg-gradient-to-r ${album.accent} p-4 border border-white/50 shadow-sm`}
-              >
-                <div className="flex items-center gap-4">
-                  <img
-                    src={album.cover}
-                    alt={album.title}
-                    className="w-16 h-16 rounded-2xl object-cover shadow-md transition duration-300 hover:scale-105"
-                  />
-
-                  <div>
-                    <h2 className="text-2xl font-black leading-tight">
-                      {album.title}
-                    </h2>
-
-                    <p className="text-sm text-zinc-500">
-                      {album.songs.length} tracks
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* SONGS */}
-              <div className="grid grid-cols-2 gap-4">
-                {album.songs.map((song) => (
-                  <button
-                    key={song}
-                    onClick={() => toggleSong(song)}
-                    className={`p-4 rounded-2xl border transition-all duration-200 ${
-                      selectedSongs.includes(song)
-                        ? "bg-[#fd9abc] text-black border-[#fd9abc] shadow-md scale-[1.02]"
-                        : "bg-pink-50 border-pink-200 hover:border-[#fd9abc] hover:bg-pink-100 active:scale-95"
-                    }`}
-                  >
-                    {song}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="text-zinc-400 mb-6 text-sm md:text-base">
+          <p>Armá tu setlist ideal, descargalo y compartilo!</p>
+          <p>Create your ideal setlist, download it and share it!</p>
         </div>
 
-        {/* POSTER FIX FINAL */}
-        <div className="sticky top-10">
-          <div
-            ref={posterRef}
-            className="relative rounded-3xl p-10 w-[1080px] min-h-[1350px] overflow-hidden"
+        <input
+          type="text"
+          placeholder="@user..."
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="border p-2 rounded-lg mb-6 w-full max-w-sm"
+        />
+
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <p className="text-[#fd9abc] text-base md:text-lg">
+            {selectedSongs.length}/20 canciones seleccionadas
+          </p>
+
+          <button
+            onClick={downloadPoster}
+            disabled={isDownloading}
+            className="hidden sm:inline-flex bg-[#fd9abc] text-black px-6 py-3 rounded-xl font-bold items-center justify-center gap-3 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {/* Fondo */}
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('/img/fondo.png')" }}
-            />
+            {downloadButtonContent}
+          </button>
+        </div>
 
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-white/40" />
-
-            {/* CONTENIDO */}
-            <div className="relative z-10">
-              <p className="uppercase tracking-[0.3em] text-sm mb-3">
-                setlist - <span className="font-semibold">{formattedRuntime}</span>
-              </p>
-
-              <h2 className="text-5xl font-black leading-none mb-2">
-                THE HAYLEY WILLIAMS SHOW
-              </h2>
-
-              {name && (
-                <p className="text-sm opacity-70 mb-8">
-                  by {name}
-                </p>
-              )}
-
-              <DndContext
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={selectedSongs}
-                  strategy={verticalListSortingStrategy}
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(360px,720px)] gap-10 items-start">
+          {/* LISTA */}
+          <div className="min-w-0 space-y-10">
+            {albums.map((album) => (
+              <div key={album.title} className="min-w-0">
+                {/* HEADER DEL ALBUM */}
+                <div
+                  className={`mb-5 rounded-3xl bg-gradient-to-r ${album.accent} p-4 border border-white/50 shadow-sm`}
                 >
-                  <div className="space-y-3">
-                    {selectedSongs.map((song, index) => (
-                      <SortableSong
-                        key={song}
-                        song={song}
-                        index={index}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
+                  <div className="flex items-center gap-4 min-w-0">
+                    <img
+                      src={album.cover}
+                      alt={album.title}
+                      className="w-14 h-14 md:w-16 md:h-16 rounded-2xl object-cover shadow-md transition duration-300 hover:scale-105 shrink-0"
+                    />
 
-              <p className="mt-10 text-sm opacity-70">
-                @ParamoreArgent
-              </p>
+                    <div className="min-w-0">
+                      <h2 className="text-xl md:text-2xl font-black leading-tight break-words">
+                        {album.title}
+                      </h2>
+
+                      <p className="text-sm text-zinc-500">
+                        {album.songs.length} tracks
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SONGS */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {album.songs.map((song) => (
+                    <button
+                      key={song}
+                      onClick={() => toggleSong(song)}
+                      className={`min-w-0 p-4 rounded-2xl border transition-all duration-200 text-sm md:text-base ${
+                        selectedSongs.includes(song)
+                          ? "bg-[#fd9abc] text-black border-[#fd9abc] shadow-md scale-[1.02]"
+                          : "bg-pink-50 border-pink-200 hover:border-[#fd9abc] hover:bg-pink-100 active:scale-95"
+                      }`}
+                    >
+                      {song}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* MOBILE DOWNLOAD BUTTON */}
+          <div className="sm:hidden my-5">
+            <button
+              onClick={downloadPoster}
+              disabled={isDownloading}
+              className="w-full bg-[#fd9abc] text-black px-6 py-4 rounded-2xl font-bold inline-flex items-center justify-center gap-3 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {downloadButtonContent}
+            </button>
+          </div>
+
+          {/* POSTER */}
+          <div className="min-w-0 w-full xl:sticky xl:top-10">
+            <div
+              className="
+                relative
+                mx-auto
+                w-full
+                max-w-[720px]
+                rounded-3xl
+                overflow-hidden
+                p-5
+                sm:p-7
+                md:p-10
+                transition-all
+                duration-300
+              "
+              style={{
+                minHeight: "950px",
+              }}
+            >
+              {/* Fondo */}
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: "url('/img/fondo.png')" }}
+              />
+
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-white/40" />
+
+              {/* CONTENIDO */}
+              <div className="relative z-10 h-full">
+                <p className="uppercase tracking-[0.25em] md:tracking-[0.3em] text-[10px] md:text-sm mb-3">
+                  setlist -{" "}
+                  <span className="font-semibold">
+                    {formattedRuntime}
+                  </span>
+                </p>
+
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-black leading-none mb-2 break-words">
+                  THE HAYLEY WILLIAMS SHOW
+                </h2>
+
+                {name && (
+                  <p className="text-xs md:text-sm opacity-70 mb-6 md:mb-8">
+                    by {name}
+                  </p>
+                )}
+
+                <DndContext
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={selectedSongs}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-2 md:space-y-3">
+                      {selectedSongs.map((song, index) => (
+                        <SortableSong
+                          key={song}
+                          song={song}
+                          index={index}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+
+                <p className="mt-8 md:mt-10 text-xs md:text-sm opacity-70">
+                  @ParamoreArgent
+                </p>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HIDDEN EXPORT POSTER */}
+      <div className="fixed -left-[99999px] top-0 pointer-events-none">
+        <div
+          ref={posterRef}
+          className="
+            relative
+            w-[1080px]
+            h-[1350px]
+            rounded-[48px]
+            overflow-hidden
+            p-10
+          "
+        >
+          {/* Fondo */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/img/fondo.png')" }}
+          />
+
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-white/40" />
+
+          {/* CONTENIDO */}
+          <div className="relative z-10 h-full">
+            <p className="uppercase tracking-[0.3em] text-sm mb-3">
+              setlist -{" "}
+              <span className="font-semibold">
+                {formattedRuntime}
+              </span>
+            </p>
+
+            <h2 className="text-5xl font-black leading-none mb-2">
+              THE HAYLEY WILLIAMS SHOW
+            </h2>
+
+            {name && (
+              <p className="text-sm opacity-70 mb-8">
+                by {name}
+              </p>
+            )}
+
+            <div className="space-y-3">
+              {selectedSongs.map((song, index) => (
+                <p
+                  key={song}
+                  className="text-xl border-b border-white/30 pb-2"
+                >
+                  {index + 1}. {song}
+                </p>
+              ))}
+            </div>
+
+            <p className="mt-10 text-sm opacity-70">
+              @ParamoreArgent
+            </p>
           </div>
         </div>
       </div>
