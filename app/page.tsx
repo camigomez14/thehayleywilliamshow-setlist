@@ -5,6 +5,9 @@ import { useRef, useState } from "react";
 import {
   DndContext,
   closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 
 import {
@@ -171,6 +174,7 @@ function SortableSong({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    touchAction: "none",
   };
 
   return (
@@ -193,6 +197,14 @@ export default function Home() {
   const [selectedSongs, setSelectedSongs] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 180,
+        tolerance: 8,
+      },
+    })
+  );
 
   const posterRef = useRef<HTMLDivElement>(null);
 
@@ -401,6 +413,7 @@ export default function Home() {
                 )}
 
                 <DndContext
+                  sensors={sensors}
                   collisionDetection={closestCenter}
                   onDragEnd={handleDragEnd}
                 >
