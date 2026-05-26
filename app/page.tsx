@@ -253,7 +253,7 @@ export default function Home() {
   const downloadButtonContent = isDownloading ? (
     <>
       <span className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-      <span>Generating...</span>
+      <span>Generando...</span>
     </>
   ) : (
     "Descargar"
