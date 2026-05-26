@@ -21,7 +21,8 @@ const albums = [
   {
     title: "Petals for Armor",
     cover: "/img/petals-for-armor.png",
-    accent: "from-pink-100 to-pink-50",
+    accent: "from-[#fdf1f6] to-[#fff7fa]",
+    selectedColor: "bg-[#fd9abc] border-[#fd9abc]",
     songs: [
       "Simmer",
       "Leave It Alone",
@@ -44,7 +45,8 @@ const albums = [
   {
     title: "FLOWERS for VASES / descansos",
     cover: "/img/flowers-for-vases.png",
-    accent: "from-stone-100 to-zinc-50",
+    accent: "from-[#fdf1f6] to-[#fff7fa]",
+    selectedColor: "bg-[#B60F4C] border-[#d8c5b6]",
     songs: [
       "First Thing to Go",
       "My Limb",
@@ -66,7 +68,8 @@ const albums = [
   {
     title: "EGO DEATH AT A BACHELORETTE PARTY",
     cover: "/img/ego-death-at-a-bachelorette-party.png",
-    accent: "from-orange-100 to-pink-50",
+    accent: "from-[#fdf1f6] to-[#fff7fa]",
+    selectedColor: "bg-[#FFBF3F] border-[#ffb08c]",
     songs: [
       "Ice In My OJ",
       "Glum",
@@ -253,7 +256,7 @@ export default function Home() {
       <span>Generating...</span>
     </>
   ) : (
-    "Download Poster"
+    "Descargar"
   );
 
   return (
@@ -312,7 +315,7 @@ export default function Home() {
                       </h2>
 
                       <p className="text-sm text-zinc-500">
-                        {album.songs.length} tracks
+                        {album.songs.length} canciones
                       </p>
                     </div>
                   </div>
@@ -326,7 +329,7 @@ export default function Home() {
                       onClick={() => toggleSong(song)}
                       className={`min-w-0 p-4 rounded-2xl border transition-all duration-200 text-sm md:text-base ${
                         selectedSongs.includes(song)
-                          ? "bg-[#fd9abc] text-black border-[#fd9abc] shadow-md scale-[1.02]"
+                          ? `${album.selectedColor} text-black shadow-md scale-[1.02]`
                           : "bg-pink-50 border-pink-200 hover:border-[#fd9abc] hover:bg-pink-100 active:scale-95"
                       }`}
                     >
